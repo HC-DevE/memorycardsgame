@@ -4,15 +4,16 @@ import { Card, Row, Col, Alert, Button } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./MemoryGame.css";
 
+
 const cardsData = [
-  { id: 1, value: "A" },
-  { id: 2, value: "B" },
-  { id: 3, value: "C" },
-  { id: 4, value: "D" },
-  { id: 5, value: "A" },
-  { id: 6, value: "B" },
-  { id: 7, value: "C" },
-  { id: 8, value: "D" },
+  { id: 1, value: "🍿" },
+  { id: 2, value: "🍐" },
+  { id: 3, value: "🍓" },
+  { id: 4, value: "🍌" },
+  { id: 5, value: "🍿" },
+  { id: 6, value: "🍐" },
+  { id: 7, value: "🍓" },
+  { id: 8, value: "🍌" },
 ];
 
 function MemoryGame() {
@@ -21,6 +22,7 @@ function MemoryGame() {
   const [matchedCards, setMatchedCards] = useState([]);
   const [score, setScore] = useState(0);
   const [errors, setErrors] = useState(0);
+  const [messageWin, setMessageWin] = useState("");
 
   useEffect(() => {
     if (flippedCards.length === 2) {
@@ -43,12 +45,19 @@ function MemoryGame() {
     setCards(shuffledCards);
   }, []);
 
+  useEffect(() => {
+    if (score === 4) {
+      setMessageWin("Vous avez gagné!");
+    }
+  }, [score]);
+
+
   const flipCard = (card) => {
     if (flippedCards.length === 2 || matchedCards.includes(card.id)) {
-      return;
+      return false;
     }
     if (flippedCards.length === 1 && flippedCards[0].id === card.id) {
-      return;
+      return true;
     }
     setFlippedCards([...flippedCards, card]);
   };
@@ -74,26 +83,30 @@ function MemoryGame() {
     return shuffledArray;
   };
 
+
   return (
     <div className="container text-center">
       <h1 className="mb-4">Memory Game</h1>
+      {/* <h2 className="mb-4 color">{messageWin}</h2> */}
+      <Alert variant="success" className="mb-4">
+        {messageWin}
+      </Alert>
       <Row className="mb-3">
         {cards.map((card) => (
           <Col key={card.id} sm={3} className="mb-3">
             <Card
-              className={`memory-card ${
-                flippedCards.includes(card) || matchedCards.includes(card.id)
-                  ? "flipped"
-                  : ""
-              }`}
-              onClick={() => flipCard(card)}
+              className={`memory-card ${flippedCards.includes(card) || matchedCards.includes(card.id)
+                ? "flipped"
+                : ""
+                }`}
+              onClick={() => { flipCard(card); console.log(flippedCards) }}
             >
               <div className="card-inner">
                 <div className="card-front">
                   <Card.Body>
                     <Card.Title>
                       {flippedCards.includes(card) ||
-                      matchedCards.includes(card.id)
+                        matchedCards.includes(card.id)
                         ? card.value
                         : "?"}
                     </Card.Title>
